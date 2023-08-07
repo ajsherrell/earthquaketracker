@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
 
         GlobalScope.launch {
             val result = viewModel.quakeApi.getQuake()
-            Log.d("ajSherrell", "${result.body()}")
+            Log.d("Get the quake response: ", "${result.body()}")
             setContent {
                 EarthquakeTrackerTheme {
                     // A surface container using the 'background' color from the theme

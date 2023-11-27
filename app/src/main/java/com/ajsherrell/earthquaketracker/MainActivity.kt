@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,20 +40,20 @@ class MainActivity : ComponentActivity() {
         GlobalScope.launch {
             val result = viewModel.quakeApi.getQuake()
             runOnUiThread {
+                val quakeData = result.body()
                 setContent {
                     EarthquakeTrackerTheme {
                         // A surface container using the 'background' color from the theme
                         Surface(
-                            modifier = Modifier.fillMaxSize(),
                             color = MaterialTheme.colorScheme.background
                         ) {
-                            Box(modifier = Modifier.fillMaxWidth()) {
+                            Column(modifier = Modifier.fillMaxWidth()) {
                                 Text(
                                     modifier = Modifier.padding(8.dp),
                                     text = "Get quake response here."
                                 )
                                 DividerLine()
-                                result.body()?.let { quakeData ->
+                                if (quakeData != null) {
                                     Greeting(quakeData)
                                 }
                             }
@@ -67,7 +68,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(data: QuakeData, modifier: Modifier = Modifier) {
     Text(
-        text = "Hello ${data.location}!",
+        text = "Hello ${data.magnitude}!",
         modifier = modifier.padding(8.dp)
     )
 }

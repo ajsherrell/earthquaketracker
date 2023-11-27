@@ -5,12 +5,23 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.ajsherrell.earthquaketracker.api.QuakeData
 import com.ajsherrell.earthquaketracker.ui.theme.EarthquakeTrackerTheme
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -27,15 +38,25 @@ class MainActivity : ComponentActivity() {
 
         GlobalScope.launch {
             val result = viewModel.quakeApi.getQuake()
-            Log.d("Get the quake response: ", "${result.body()}")
-            setContent {
-                EarthquakeTrackerTheme {
-                    // A surface container using the 'background' color from the theme
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorScheme.background
-                    ) {
-                        result.body()?.let { Greeting(it) }
+            runOnUiThread {
+                setContent {
+                    EarthquakeTrackerTheme {
+                        // A surface container using the 'background' color from the theme
+                        Surface(
+                            modifier = Modifier.fillMaxSize(),
+                            color = MaterialTheme.colorScheme.background
+                        ) {
+                            Box(modifier = Modifier.fillMaxWidth()) {
+                                Text(
+                                    modifier = Modifier.padding(8.dp),
+                                    text = "Get quake response here."
+                                )
+                                DividerLine()
+                                result.body()?.let { quakeData ->
+                                    Greeting(quakeData)
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -46,7 +67,12 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(data: QuakeData, modifier: Modifier = Modifier) {
     Text(
-        text = "Hello ${data.magnitude}!",
-        modifier = modifier
+        text = "Hello ${data.location}!",
+        modifier = modifier.padding(8.dp)
     )
+}
+
+@Composable
+fun DividerLine() {
+    Spacer(modifier = Modifier.height(1.dp).background(Color.Gray))
 }

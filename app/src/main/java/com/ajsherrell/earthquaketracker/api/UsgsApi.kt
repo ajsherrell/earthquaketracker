@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 
 interface UsgsApi {
-    @GET("query")
+    @GET("count?format=geojson")
     suspend fun getQuake() : Response<QuakeData>
 }
 

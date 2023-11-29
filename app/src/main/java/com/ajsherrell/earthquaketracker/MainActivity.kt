@@ -32,7 +32,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         GlobalScope.launch {
-            val result = viewModel.quakeApi.getQuake()
+            val result = viewModel.quakeApi.getQuake(
+                startTime = viewModel.startTime,
+                endTime = viewModel.endTime,
+                minMagnitude = viewModel.minMagnitude
+            )
             runOnUiThread {
                 val quakeData = result.body()
                 setContent {
@@ -62,7 +66,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(data: QuakeData, modifier: Modifier = Modifier) {
     Text(
-        text = "Hello ${data}!",
+        text = "Earth quake count is ${data.metadata.count}.",
         modifier = modifier.padding(8.dp)
     )
 }

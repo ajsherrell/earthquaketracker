@@ -7,10 +7,15 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface UsgsApi {
-    @GET("query?format=geojson&starttime=2022-01-01&endtime=2023-01-01&minmagnitude=5")
-    suspend fun getQuake() : Response<QuakeData>
+    @GET("query?format=geojson")
+    suspend fun getQuake(
+        @Query("starttime") startTime: String,
+        @Query("endtime") endTime: String,
+        @Query("minmagnitude") minMagnitude: Int
+    ) : Response<QuakeData>
 }
 
 object RetrofitHelper {

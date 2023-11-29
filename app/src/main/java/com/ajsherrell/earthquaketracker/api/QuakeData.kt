@@ -44,8 +44,7 @@ data class Properties(
     val types: String,
     val nst: Int?,
     val dmin: Double?,
-    val rms: Double,
-    val gap: Int?,
+    val rms: Double?,
     val magType: String,
     val title: String
 )

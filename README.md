@@ -6,3 +6,5 @@ Use USGS Api to track earth quakes.
 - Coroutines
 - Retrofit
 - Jetpack Compose
+- Dagger Hilt
+- MVVM

@@ -3,7 +3,6 @@ package com.ajsherrell.earthquaketracker
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,18 +25,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.ajsherrell.earthquaketracker.presentation.QuakeViewModel
+import com.ajsherrell.earthquaketracker.presentation.viewModelFactory
 import com.ajsherrell.earthquaketracker.ui.theme.EarthquakeTrackerTheme
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    private val viewModel: QuakeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             EarthquakeTrackerTheme {
+                val viewModel = viewModel<QuakeViewModel>(
+                    factory = viewModelFactory {
+                        QuakeViewModel(MyApp.appModule.quakeRepository)
+                    }
+                )
                 Surface(
                     color = MaterialTheme.colorScheme.background
                 ) {

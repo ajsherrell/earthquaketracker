@@ -3,9 +3,8 @@ package com.ajsherrell.earthquaketracker.repository
 import com.ajsherrell.earthquaketracker.api.QuakeData
 import com.ajsherrell.earthquaketracker.api.UsgsApi
 import com.ajsherrell.earthquaketracker.domain.QuakeRepository
-import javax.inject.Inject
 
-class QuakeRepositoryImpl @Inject constructor(
+class QuakeRepositoryImpl(
     private val api: UsgsApi
 ): QuakeRepository {
 

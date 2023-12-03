@@ -1,7 +1,17 @@
 package com.ajsherrell.earthquaketracker
 
 import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
+import com.ajsherrell.earthquaketracker.di.AppModule
+import com.ajsherrell.earthquaketracker.di.AppModuleImpl
 
-@HiltAndroidApp
-class MyApp: Application()
+class MyApp: Application() {
+
+    companion object {
+        lateinit var appModule: AppModule
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        appModule = AppModuleImpl(this)
+    }
+}

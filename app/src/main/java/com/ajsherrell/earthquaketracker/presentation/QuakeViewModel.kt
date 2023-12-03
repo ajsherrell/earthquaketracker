@@ -1,4 +1,4 @@
-package com.ajsherrell.earthquaketracker
+package com.ajsherrell.earthquaketracker.presentation
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,9 +10,8 @@ import androidx.lifecycle.viewModelScope
 import com.ajsherrell.earthquaketracker.api.QuakeData
 import com.ajsherrell.earthquaketracker.domain.QuakeRepository
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-class QuakeViewModel @Inject constructor(
+class QuakeViewModel(
     private val repository: QuakeRepository
 ): ViewModel() {
 

@@ -20,6 +20,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -50,8 +53,7 @@ class MainActivity : ComponentActivity() {
                             text = "Get quake response here."
                         )
                         DividerLine()
-                        Greeting(viewModel = viewModel)
-                        DividerLine()
+                        StartEarthQuakeTracker(viewModel = viewModel)
                     }
                 }
             }
@@ -60,14 +62,22 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(viewModel: QuakeViewModel, modifier: Modifier = Modifier) {
-    val data by viewModel.quakeTrackerData.observeAsState()
-
+fun StartEarthQuakeTracker(viewModel: QuakeViewModel, modifier: Modifier = Modifier) {
     LaunchedEffect(Unit) {
         viewModel.fetchQuakeData()
     }
+    GetUserInput(viewModel = viewModel, modifier = modifier)
+    DividerLine()
+}
+
+@Composable
+fun Greeting(
+    viewModel: QuakeViewModel,
+    modifier: Modifier
+) {
+    val data by viewModel.quakeTrackerData.observeAsState()
     Column {
-        if (data?.features?.isEmpty() == true) {
+        if (data == null) {
             Text(text = "Loading...")
         } else {
             Text(
@@ -87,12 +97,14 @@ fun DividerLine() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UpdateUserInput(viewModel: QuakeViewModel, modifier: Modifier = Modifier) {
+fun GetUserInput(viewModel: QuakeViewModel, modifier: Modifier) {
+    var startTime by remember { mutableStateOf("") }
+    var endTime by remember { mutableStateOf("") }
     Column {
         TextField(
-            value = viewModel.startTime,
-            onValueChange = { startTime ->
-                viewModel.updateStartTime(startTime)
+            value = startTime,
+            onValueChange = { newStartTime ->
+                startTime = newStartTime
             },
             modifier = modifier,
             label = { Text(text = "Start Date:") },
@@ -104,9 +116,9 @@ fun UpdateUserInput(viewModel: QuakeViewModel, modifier: Modifier = Modifier) {
         )
         DividerLine()
         TextField(
-            value = viewModel.endTime,
-            onValueChange = { endTime ->
-                viewModel.updateEndTime(endTime)
+            value = endTime,
+            onValueChange = { newEndTime ->
+                endTime = newEndTime
             },
             modifier = modifier,
             label = { Text(text = "End Date:") },
@@ -118,7 +130,9 @@ fun UpdateUserInput(viewModel: QuakeViewModel, modifier: Modifier = Modifier) {
         )
         DividerLine()
         Button(
-            onClick = {},
+            onClick = {
+                viewModel.updateTimes(startTime, endTime)
+            },
             modifier = Modifier.padding(8.dp)
         ) {
             Text(
@@ -126,6 +140,7 @@ fun UpdateUserInput(viewModel: QuakeViewModel, modifier: Modifier = Modifier) {
                 modifier = Modifier.padding(8.dp)
             )
         }
+        DividerLine()
+        Greeting(viewModel = viewModel, modifier = modifier)
     }
 }
-

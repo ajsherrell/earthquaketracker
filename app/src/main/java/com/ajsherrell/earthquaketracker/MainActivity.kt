@@ -143,11 +143,19 @@ fun GetUserInput(
 ) {
     var startTime by remember { mutableStateOf("") }
     var endTime by remember { mutableStateOf("") }
+    var isEnabled by remember { mutableStateOf(false) }
+
     Column {
         TextField(
             value = startTime,
             onValueChange = { newStartTime ->
                 startTime = newStartTime
+            },
+            placeholder = {
+                Text(
+                    text = "YYYY-MM-DD",
+                    color = Color.LightGray
+                )
             },
             modifier = modifier,
             label = { Text(text = "Start Date:") },
@@ -162,6 +170,13 @@ fun GetUserInput(
             value = endTime,
             onValueChange = { newEndTime ->
                 endTime = newEndTime
+                isEnabled = true
+            },
+            placeholder = {
+                Text(
+                    text = "YYYY-MM-DD",
+                    color = Color.LightGray
+                )
             },
             modifier = modifier,
             label = { Text(text = "End Date:") },
@@ -179,6 +194,7 @@ fun GetUserInput(
                     endTime
                 ))
             },
+            enabled = isEnabled,
             modifier = Modifier.padding(8.dp)
         ) {
             Text(

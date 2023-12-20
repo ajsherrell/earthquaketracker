@@ -6,10 +6,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +33,7 @@ import coil.request.ImageRequest
 import com.ajsherrell.earthquaketracker.DividerLine
 import com.ajsherrell.earthquaketracker.navigation.Screen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavController) {
     val painter = rememberAsyncImagePainter(
@@ -37,9 +42,20 @@ fun MainScreen(navController: NavController) {
             .build()
     )
 
-    Surface(
-        color = MaterialTheme.colorScheme.background
-    ) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Earthquakes") },
+                colors = TopAppBarColors(
+                    containerColor = Color.LightGray,
+                    scrolledContainerColor = Color.LightGray,
+                    navigationIconContentColor = Color.Black,
+                    titleContentColor = Color.Black,
+                    actionIconContentColor = Color.Black
+                )
+            )
+        }
+    ) { padding ->
         Column(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier

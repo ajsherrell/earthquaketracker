@@ -9,3 +9,4 @@ Use USGS Api to track earth quakes.
 - Dagger Hilt (separate branch)
 - MVVM
 - Compose Navigation
+- Coil Image Loader

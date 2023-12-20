@@ -7,9 +7,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.ajsherrell.earthquaketracker.CountScreen
-import com.ajsherrell.earthquaketracker.MainScreen
 import com.ajsherrell.earthquaketracker.presentation.QuakeViewModel
+import com.ajsherrell.earthquaketracker.screens.MainScreen
+import com.ajsherrell.earthquaketracker.screens.CountScreen
 
 @Composable
 fun Navigation(viewModel: QuakeViewModel) {

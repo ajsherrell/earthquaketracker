@@ -1,6 +1,11 @@
 package com.ajsherrell.earthquaketracker.screens
 
+import androidx.compose.animation.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +39,19 @@ fun CountScreen(
     startTime: String,
     endTime: String
 ) {
+    val colorState = remember { Animatable(Color.DarkGray) }
+    val targetColor = Color.Gray
+    LaunchedEffect(colorState) {
+        while (true) {
+            colorState.animateTo(targetColor, animationSpec = infiniteRepeatable(
+                tween(durationMillis = 1000, easing = LinearEasing)
+            ))
+            colorState.animateTo(Color.DarkGray, animationSpec = infiniteRepeatable(
+                tween(durationMillis = 1000, easing = LinearEasing)
+            ))
+        }
+    }
+
     LaunchedEffect(Unit) {
         viewModel.fetchQuakeData(startTime, endTime)
     }
@@ -40,10 +59,14 @@ fun CountScreen(
     Scaffold(
         topBar = {
             TopAppBar(
+                modifier = modifier.border(1.dp, Color.DarkGray),
                 title = { Text("Quake Count") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Navigate Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Navigate Back"
+                        )
                     }
                 },
                 colors = TopAppBarColors(
@@ -63,7 +86,10 @@ fun CountScreen(
                 .background(Color.LightGray)
         ) {
             if (data == null) {
-                Text(text = "Loading...")
+                Text(
+                    text = "Loading...",
+                    color = colorState.value
+                )
             } else {
                 Text(
                     text = "Earth quake count is ${data?.metadata?.count}.",

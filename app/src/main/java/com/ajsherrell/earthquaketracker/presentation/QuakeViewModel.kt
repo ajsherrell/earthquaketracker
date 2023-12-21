@@ -16,7 +16,6 @@ class QuakeViewModel(
 ): ViewModel() {
 
     private val defaultMinMagnitude = 5
-    val regex = Regex("^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$") //todo: compare.
 
     private val _quakeTrackerData = MutableLiveData<QuakeData>()
     val quakeTrackerData: LiveData<QuakeData> = _quakeTrackerData

@@ -4,9 +4,10 @@ Use USGS Api to track earth quakes.
 
 ### Uses: 
 - Coroutines
-- Retrofit
+- Retrofit/Moshi
 - Jetpack Compose
 - Dagger Hilt (separate branch)
 - MVVM
 - Compose Navigation
 - Coil Image Loader
+- Animation

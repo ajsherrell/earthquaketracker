@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -83,6 +81,8 @@ fun GetUserInput(
     var startTime by remember { mutableStateOf("") }
     var endTime by remember { mutableStateOf("") }
     var isEnabled by remember { mutableStateOf(false) }
+    var isVisible by remember { mutableStateOf(false) }
+    val regex = Regex("^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$")
 
     Column {
         TextField(
@@ -133,6 +133,7 @@ fun GetUserInput(
                     startTime,
                     endTime
                 ))
+                isVisible = true
             },
             enabled = isEnabled,
             modifier = Modifier.padding(8.dp)
@@ -141,6 +142,9 @@ fun GetUserInput(
                 text = "Enter Data",
                 modifier = Modifier.padding(8.dp)
             )
+        }
+        if (isVisible) {
+            Text(text = "Loading...")
         }
     }
 }

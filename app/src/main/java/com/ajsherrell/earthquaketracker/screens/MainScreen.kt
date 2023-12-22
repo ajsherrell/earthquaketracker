@@ -1,5 +1,7 @@
 package com.ajsherrell.earthquaketracker.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,7 +32,9 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.ajsherrell.earthquaketracker.DividerLine
 import com.ajsherrell.earthquaketracker.navigation.Screen
+import java.time.LocalDate
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavController) {
@@ -73,6 +77,7 @@ fun MainScreen(navController: NavController) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun GetUserInput(
     modifier: Modifier,
@@ -82,7 +87,9 @@ fun GetUserInput(
     var endTime by remember { mutableStateOf("") }
     var isEnabled by remember { mutableStateOf(false) }
     var isVisible by remember { mutableStateOf(false) }
-    val regex = Regex("^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$")
+    var showError by remember { mutableStateOf(false) }
+    val regexToMatch = Regex("\\d{4}-\\d{2}-\\d{2}")
+    val currentDate = LocalDate.now()
 
     Column {
         TextField(
@@ -109,7 +116,11 @@ fun GetUserInput(
             value = endTime,
             onValueChange = { newEndTime ->
                 endTime = newEndTime
-                isEnabled = true
+                if (startTime.matches(regexToMatch) &&
+                    endTime.matches(regexToMatch)) {
+                    isEnabled = true
+                    showError = false
+                } else showError = true
             },
             placeholder = {
                 Text(
@@ -128,12 +139,19 @@ fun GetUserInput(
         DividerLine()
         Button(
             onClick = {
-                navController.navigate(
-                    Screen.CountScreen.withArgs(
-                    startTime,
-                    endTime
-                ))
-                isVisible = true
+                if (currentDate.isAfter(LocalDate.parse(endTime)) &&
+                    LocalDate.parse(endTime).isAfter(LocalDate.parse(startTime))) {
+                    navController.navigate(
+                        Screen.CountScreen.withArgs(
+                            startTime,
+                            endTime
+                        ))
+                    isVisible = true
+                    showError = false
+                } else {
+                    showError = true
+                }
+
             },
             enabled = isEnabled,
             modifier = Modifier.padding(8.dp)
@@ -145,6 +163,12 @@ fun GetUserInput(
         }
         if (isVisible) {
             Text(text = "Loading...")
+        }
+        if (showError) {
+            Text(
+                text = "Please enter correct format: yyyy-mm-dd.\nEnter $currentDate or less.",
+                color = Color.Red
+            )
         }
     }
 }

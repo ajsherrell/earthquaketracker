@@ -8,7 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -77,6 +80,7 @@ fun MainScreen(navController: NavController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun GetUserInput(
@@ -90,6 +94,9 @@ fun GetUserInput(
     var showError by remember { mutableStateOf(false) }
     val regexToMatch = Regex("\\d{4}-\\d{2}-\\d{2}")
     val currentDate = LocalDate.now()
+    val magnitudeOptions = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9")
+    var expanded by remember { mutableStateOf(false) }
+    var selectedMinMag by remember { mutableStateOf("") }
 
     Column {
         TextField(
@@ -117,7 +124,8 @@ fun GetUserInput(
             onValueChange = { newEndTime ->
                 endTime = newEndTime
                 if (startTime.matches(regexToMatch) &&
-                    endTime.matches(regexToMatch)) {
+                    endTime.matches(regexToMatch)
+                ) {
                     isEnabled = true
                     showError = false
                 } else showError = true
@@ -137,6 +145,33 @@ fun GetUserInput(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
         DividerLine()
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
+        ) {
+            TextField(
+                modifier = Modifier.menuAnchor(),
+                readOnly = true,
+                value = selectedMinMag,
+                onValueChange = {},
+                label = { Text("Minimum Magnitude:") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                colors = ExposedDropdownMenuDefaults.textFieldColors()
+            )
+            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                magnitudeOptions.forEach { selectedOption ->
+                    DropdownMenuItem(
+                        text = { Text(selectedOption) },
+                        onClick = {
+                            selectedMinMag = selectedOption
+                            expanded = false
+                        },
+                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                    )
+                }
+            }
+        }
+        DividerLine()
         Button(
             onClick = {
                 if (currentDate.isAfter(LocalDate.parse(endTime)) &&
@@ -144,7 +179,8 @@ fun GetUserInput(
                     navController.navigate(
                         Screen.CountScreen.withArgs(
                             startTime,
-                            endTime
+                            endTime,
+                            selectedMinMag
                         ))
                     isVisible = true
                     showError = false

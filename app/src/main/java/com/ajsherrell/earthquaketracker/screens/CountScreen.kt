@@ -37,7 +37,8 @@ fun CountScreen(
     navController: NavController,
     viewModel: QuakeViewModel,
     startTime: String,
-    endTime: String
+    endTime: String,
+    minMagnitude: String
 ) {
     val colorState = remember { Animatable(Color.DarkGray) }
     val targetColor = Color.Gray
@@ -53,7 +54,7 @@ fun CountScreen(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.fetchQuakeData(startTime, endTime)
+        viewModel.fetchQuakeData(startTime, endTime, minMagnitude.toInt())
     }
     val data by viewModel.quakeTrackerData.observeAsState()
     Scaffold(

@@ -63,7 +63,13 @@ fun CountScreen(
                 modifier = modifier.border(1.dp, Color.DarkGray),
                 title = { Text("Quake Count") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(
+                        onClick = {
+                            navController.popBackStack()
+                            viewModel.isVisible.value = false
+                            viewModel.enterIsClicked.value = false
+                        }
+                    ) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Navigate Back"

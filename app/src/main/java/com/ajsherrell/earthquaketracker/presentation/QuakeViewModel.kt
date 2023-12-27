@@ -22,6 +22,7 @@ class QuakeViewModel(
     var endTime = mutableStateOf("")
     var isEnabled = mutableStateOf(false)
     var isVisible = mutableStateOf(false)
+    var enterIsClicked = mutableStateOf(false)
     var showError = mutableStateOf(false)
     val regexToMatch = Regex("\\d{4}-\\d{2}-\\d{2}")
     @RequiresApi(Build.VERSION_CODES.O)

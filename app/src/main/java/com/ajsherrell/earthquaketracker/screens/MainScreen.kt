@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
@@ -160,32 +161,54 @@ fun GetUserInput(
             }
         }
         DividerLine()
-        Button(
-            onClick = {
-                if (viewModel.currentDate.isAfter(LocalDate.parse(viewModel.endTime.value)) &&
-                    LocalDate.parse(viewModel.endTime.value).isAfter(LocalDate.parse(viewModel.startTime.value))) {
-                    navController.navigate(
-                        Screen.CountScreen.withArgs(
-                            viewModel.startTime.value,
-                            viewModel.endTime.value,
-                            viewModel.selectedMinMag.value
-                        ))
-                    viewModel.isVisible.value = true
-                    viewModel.showError.value = false
-                } else {
-                    viewModel.showError.value = true
-                }
-
-            },
-            enabled = viewModel.isEnabled.value,
+        Row(
             modifier = Modifier.padding(8.dp)
         ) {
-            Text(
-                text = "Enter Data",
+            Button(
+                onClick = {
+                    if (viewModel.currentDate.isAfter(LocalDate.parse(viewModel.endTime.value)) &&
+                        LocalDate.parse(viewModel.endTime.value).isAfter(LocalDate.parse(viewModel.startTime.value))) {
+                        navController.navigate(
+                            Screen.CountScreen.withArgs(
+                                viewModel.startTime.value,
+                                viewModel.endTime.value,
+                                viewModel.selectedMinMag.value
+                            ))
+                        viewModel.isVisible.value = true
+                        viewModel.showError.value = false
+                    } else {
+                        viewModel.showError.value = true
+                    }
+                    viewModel.enterIsClicked.value = true
+                },
+                enabled = viewModel.isEnabled.value,
                 modifier = Modifier.padding(8.dp)
-            )
+            ) {
+                Text(
+                    text = "Enter Data",
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+            DividerLine()
+            Button(
+                modifier = Modifier.padding(8.dp),
+                onClick = {
+                    viewModel.startTime.value = ""
+                    viewModel.endTime.value = ""
+                    viewModel.selectedMinMag.value = viewModel.magnitudeOptions.first()
+                    viewModel.enterIsClicked.value = false
+                    viewModel.isVisible.value = false
+                    viewModel.isEnabled.value = false
+                }
+            ) {
+                Text(
+                    text = "Clear All",
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
         }
-        if (viewModel.isVisible.value) {
+
+        if (viewModel.isVisible.value && viewModel.enterIsClicked.value) {
             Text(text = "Loading...")
         }
         if (viewModel.showError.value) {

@@ -18,10 +18,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
@@ -35,12 +31,13 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.ajsherrell.earthquaketracker.DividerLine
 import com.ajsherrell.earthquaketracker.navigation.Screen
+import com.ajsherrell.earthquaketracker.presentation.QuakeViewModel
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavController) {
+fun MainScreen(navController: NavController, viewModel: QuakeViewModel) {
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data("https://images.unsplash.com/photo-1603869311144-66b03d340b32?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZWFydGhxdWFrZXxlbnwwfHwwfHx8MA%3D%3D")
@@ -74,7 +71,8 @@ fun MainScreen(navController: NavController) {
             DividerLine()
             GetUserInput(
                 modifier = Modifier,
-                navController = navController
+                navController = navController,
+                viewModel = viewModel
             )
         }
     }
@@ -84,25 +82,15 @@ fun MainScreen(navController: NavController) {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun GetUserInput(
+    viewModel: QuakeViewModel,
     modifier: Modifier,
     navController: NavController
 ) {
-    var startTime by remember { mutableStateOf("") }
-    var endTime by remember { mutableStateOf("") }
-    var isEnabled by remember { mutableStateOf(false) }
-    var isVisible by remember { mutableStateOf(false) }
-    var showError by remember { mutableStateOf(false) }
-    val regexToMatch = Regex("\\d{4}-\\d{2}-\\d{2}")
-    val currentDate = LocalDate.now()
-    val magnitudeOptions = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9")
-    var expanded by remember { mutableStateOf(false) }
-    var selectedMinMag by remember { mutableStateOf("") }
-
     Column {
         TextField(
-            value = startTime,
+            value = viewModel.startTime.value,
             onValueChange = { newStartTime ->
-                startTime = newStartTime
+                viewModel.startTime.value = newStartTime
             },
             placeholder = {
                 Text(
@@ -120,15 +108,15 @@ fun GetUserInput(
         )
         DividerLine()
         TextField(
-            value = endTime,
+            value = viewModel.endTime.value,
             onValueChange = { newEndTime ->
-                endTime = newEndTime
-                if (startTime.matches(regexToMatch) &&
-                    endTime.matches(regexToMatch)
+                viewModel.endTime.value = newEndTime
+                if (viewModel.startTime.value.matches(viewModel.regexToMatch) &&
+                    viewModel.endTime.value.matches(viewModel.regexToMatch)
                 ) {
-                    isEnabled = true
-                    showError = false
-                } else showError = true
+                    viewModel.isEnabled.value = true
+                    viewModel.showError.value = false
+                } else viewModel.showError.value = true
             },
             placeholder = {
                 Text(
@@ -146,25 +134,25 @@ fun GetUserInput(
         )
         DividerLine()
         ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
+            expanded = viewModel.expanded.value,
+            onExpandedChange = { viewModel.expanded.value = !viewModel.expanded.value }
         ) {
             TextField(
                 modifier = Modifier.menuAnchor(),
                 readOnly = true,
-                value = selectedMinMag,
+                value = viewModel.selectedMinMag.value,
                 onValueChange = {},
                 label = { Text("Minimum Magnitude:") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = viewModel.expanded.value) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors()
             )
-            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                magnitudeOptions.forEach { selectedOption ->
+            ExposedDropdownMenu(expanded = viewModel.expanded.value, onDismissRequest = { viewModel.expanded.value = false }) {
+                viewModel.magnitudeOptions.forEach { selectedOption ->
                     DropdownMenuItem(
                         text = { Text(selectedOption) },
                         onClick = {
-                            selectedMinMag = selectedOption
-                            expanded = false
+                            viewModel.selectedMinMag.value = selectedOption
+                            viewModel.expanded.value = false
                         },
                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
                     )
@@ -174,22 +162,22 @@ fun GetUserInput(
         DividerLine()
         Button(
             onClick = {
-                if (currentDate.isAfter(LocalDate.parse(endTime)) &&
-                    LocalDate.parse(endTime).isAfter(LocalDate.parse(startTime))) {
+                if (viewModel.currentDate.isAfter(LocalDate.parse(viewModel.endTime.value)) &&
+                    LocalDate.parse(viewModel.endTime.value).isAfter(LocalDate.parse(viewModel.startTime.value))) {
                     navController.navigate(
                         Screen.CountScreen.withArgs(
-                            startTime,
-                            endTime,
-                            selectedMinMag
+                            viewModel.startTime.value,
+                            viewModel.endTime.value,
+                            viewModel.selectedMinMag.value
                         ))
-                    isVisible = true
-                    showError = false
+                    viewModel.isVisible.value = true
+                    viewModel.showError.value = false
                 } else {
-                    showError = true
+                    viewModel.showError.value = true
                 }
 
             },
-            enabled = isEnabled,
+            enabled = viewModel.isEnabled.value,
             modifier = Modifier.padding(8.dp)
         ) {
             Text(
@@ -197,12 +185,12 @@ fun GetUserInput(
                 modifier = Modifier.padding(8.dp)
             )
         }
-        if (isVisible) {
+        if (viewModel.isVisible.value) {
             Text(text = "Loading...")
         }
-        if (showError) {
+        if (viewModel.showError.value) {
             Text(
-                text = "Please enter correct format: yyyy-mm-dd.\nEnter $currentDate or less.",
+                text = "Please enter correct format: yyyy-mm-dd.\nEnter $viewModel.currentDate or less.",
                 color = Color.Red
             )
         }

@@ -22,7 +22,7 @@ fun Navigation(viewModel: QuakeViewModel) {
         startDestination = Screen.MainScreen.route
     ) {
         composable(route = Screen.MainScreen.route) {
-            MainScreen(navController = navController)
+            MainScreen(navController = navController, viewModel = viewModel)
         }
         composable(
             route = Screen.CountScreen.route + "/{startTime}/{endTime}/{minMagnitude}",

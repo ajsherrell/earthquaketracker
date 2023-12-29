@@ -239,8 +239,16 @@ private fun SetSearchBar(data: QuakeData?) {
             active = active,
             onActiveChange = { active = it },
             placeholder = { Text(text = "search location") },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search for locations.") },
-            trailingIcon = { Icon(Icons.Default.Clear, contentDescription = "Clear search text.") }
+            leadingIcon = {
+                IconButton(onClick = {  }) { // todo: Call onSearch when clicked
+                    Icon(Icons.Default.Search, contentDescription = "Search for locations.")
+                }
+            },
+            trailingIcon = {
+                IconButton(onClick = { searchQuery = "" }) {
+                    Icon(Icons.Default.Clear, contentDescription = "Clear search text.")
+                }
+            }
         ) {
             ListOfQuakePlaces(data = data, searchQuery)
         }

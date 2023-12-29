@@ -1,9 +1,13 @@
 package com.ajsherrell.earthquaketracker.screens
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
@@ -32,20 +36,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import com.ajsherrell.earthquaketracker.api.Feature
 import com.ajsherrell.earthquaketracker.api.QuakeData
 import com.ajsherrell.earthquaketracker.presentation.QuakeViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -152,9 +160,15 @@ private fun ListOfQuakePlaces(data: QuakeData?,searchQuery: String) {
         contentPadding = PaddingValues(start = 16.dp, top = 20.dp, end = 16.dp, bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(if (searchQuery.isBlank()) places else places.filter {
-            it.properties.place?.contains(searchQuery, ignoreCase = true) ?: false }) { place ->
-            ItemRow(place.properties.place, place.properties.mag)
+        itemsIndexed(if (searchQuery.isBlank()) places else places.filter {
+            it.properties.place?.contains(searchQuery, ignoreCase = true) ?: false }) { index, place ->
+            val backgroundColor = if (index % 2 == 0) Color.White else Color.LightGray
+            ItemRow(
+                place = place.properties.place,
+                magnitude = place.properties.mag,
+                backgroundColor = backgroundColor,
+                url = place.properties.url
+            )
             HorizontalDivider(
                 modifier = Modifier,
                 thickness = 1.dp,
@@ -165,22 +179,44 @@ private fun ListOfQuakePlaces(data: QuakeData?,searchQuery: String) {
 }
 
 @Composable
-private fun ItemRow(place: String?, magnitude: Double) {
-    if (place != null) {
-        Text(
-            text = "Location:\n$place",
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            color = Color.Black,
-            fontWeight = FontWeight.Thin
-        )
-        Text(
-            text = "Magnitude: $magnitude",
-            modifier = Modifier.padding(PaddingValues(start = 8.dp, bottom = 8.dp)),
-            color = Color.Black,
-            fontWeight = FontWeight.Thin
-        )
+private fun ItemRow(
+    place: String?,
+    magnitude: Double,
+    backgroundColor: Color,
+    url: String
+) {
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    Column(
+        modifier = Modifier
+            .background(backgroundColor)
+            .clickable {
+                coroutineScope.launch {
+                    try {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                        startActivity(context, intent, null)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+    ) {
+        if (place != null) {
+            Text(
+                text = "Location:\n$place",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                color = Color.Black,
+                fontWeight = FontWeight.Thin
+            )
+            Text(
+                text = "Magnitude: $magnitude",
+                modifier = Modifier.padding(PaddingValues(start = 8.dp, bottom = 8.dp)),
+                color = Color.Black,
+                fontWeight = FontWeight.Thin
+            )
+        }
     }
 }
 

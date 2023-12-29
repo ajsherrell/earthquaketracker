@@ -131,7 +131,6 @@ fun CountScreen(
                 color = Color.Gray
             )
             SetSearchBar(data)
-//            ListOfQuakePlaces(data)
         }
     }
 }
@@ -155,7 +154,7 @@ private fun ListOfQuakePlaces(data: QuakeData?,searchQuery: String) {
     ) {
         items(if (searchQuery.isBlank()) places else places.filter {
             it.properties.place?.contains(searchQuery, ignoreCase = true) ?: false }) { place ->
-            ItemRow(place.properties.place)
+            ItemRow(place.properties.place, place.properties.mag)
             HorizontalDivider(
                 modifier = Modifier,
                 thickness = 1.dp,
@@ -166,13 +165,19 @@ private fun ListOfQuakePlaces(data: QuakeData?,searchQuery: String) {
 }
 
 @Composable
-private fun ItemRow(place: String?) {
+private fun ItemRow(place: String?, magnitude: Double) {
     if (place != null) {
         Text(
-            text = place,
+            text = "Location:\n$place",
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
+            color = Color.Black,
+            fontWeight = FontWeight.Thin
+        )
+        Text(
+            text = "Magnitude: $magnitude",
+            modifier = Modifier.padding(PaddingValues(start = 8.dp, bottom = 8.dp)),
             color = Color.Black,
             fontWeight = FontWeight.Thin
         )

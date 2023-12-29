@@ -69,7 +69,7 @@ fun MainScreen(navController: NavController, viewModel: QuakeViewModel) {
                 modifier = Modifier.padding(8.dp),
                 text = "Get quake response here."
             )
-            DividerLine()
+            DividerLine(1.dp, Color.DarkGray)
             GetUserInput(
                 modifier = Modifier,
                 navController = navController,
@@ -107,7 +107,7 @@ fun GetUserInput(
             textStyle = TextStyle(Color.DarkGray),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
-        DividerLine()
+        DividerLine(1.dp, Color.DarkGray)
         TextField(
             value = viewModel.endTime.value,
             onValueChange = { newEndTime ->
@@ -133,7 +133,7 @@ fun GetUserInput(
             textStyle = TextStyle(Color.DarkGray),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
-        DividerLine()
+        DividerLine(1.dp, Color.DarkGray)
         ExposedDropdownMenuBox(
             expanded = viewModel.expanded.value,
             onExpandedChange = { viewModel.expanded.value = !viewModel.expanded.value }
@@ -160,7 +160,7 @@ fun GetUserInput(
                 }
             }
         }
-        DividerLine()
+        DividerLine(1.dp, Color.DarkGray)
         Row(
             modifier = Modifier.padding(8.dp)
         ) {
@@ -189,7 +189,7 @@ fun GetUserInput(
                     modifier = Modifier.padding(8.dp)
                 )
             }
-            DividerLine()
+            DividerLine(1.dp, Color.DarkGray)
             Button(
                 modifier = Modifier.padding(8.dp),
                 onClick = {

@@ -12,6 +12,7 @@ import androidx.navigation.navArgument
 import com.ajsherrell.earthquaketracker.presentation.QuakeViewModel
 import com.ajsherrell.earthquaketracker.screens.MainScreen
 import com.ajsherrell.earthquaketracker.screens.CountScreen
+import com.ajsherrell.earthquaketracker.screens.MapScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -48,6 +49,12 @@ fun Navigation(viewModel: QuakeViewModel) {
                 startTime = start,
                 endTime = end,
                 minMagnitude = mag
+            )
+        }
+        composable(route = Screen.MapScreen.route) {
+            MapScreen(
+                navController = navController,
+                viewModel = viewModel
             )
         }
     }

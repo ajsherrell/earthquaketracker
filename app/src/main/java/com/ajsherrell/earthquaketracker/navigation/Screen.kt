@@ -3,6 +3,7 @@ package com.ajsherrell.earthquaketracker.navigation
 sealed class Screen(val route: String) {
     object MainScreen : Screen("main_screen")
     object CountScreen : Screen("count_screen")
+    object MapScreen : Screen("map_screen")
 
     fun withArgs(vararg args: String): String {
         return buildString {

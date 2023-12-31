@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,8 +21,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -52,6 +55,7 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import com.ajsherrell.earthquaketracker.api.Feature
 import com.ajsherrell.earthquaketracker.api.QuakeData
+import com.ajsherrell.earthquaketracker.navigation.Screen
 import com.ajsherrell.earthquaketracker.presentation.QuakeViewModel
 import kotlinx.coroutines.launch
 
@@ -138,7 +142,7 @@ fun CountScreen(
                 thickness = 1.dp,
                 color = Color.Gray
             )
-            SetSearchBar(data)
+            SetSearchBar(data, navController,viewModel)
         }
     }
 }
@@ -157,6 +161,7 @@ private fun ListOfQuakePlaces(data: QuakeData?,searchQuery: String) {
     }
 
     LazyColumn(
+        modifier = Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(start = 16.dp, top = 20.dp, end = 16.dp, bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -222,7 +227,11 @@ private fun ItemRow(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SetSearchBar(data: QuakeData?) {
+private fun SetSearchBar(
+    data: QuakeData?,
+    navController: NavController,
+    viewModel: QuakeViewModel
+) {
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var active by rememberSaveable { mutableStateOf(false) }
 
@@ -250,7 +259,24 @@ private fun SetSearchBar(data: QuakeData?) {
                 }
             }
         ) {
-            ListOfQuakePlaces(data = data, searchQuery)
+            Box(modifier = Modifier.fillMaxWidth()) {
+                ListOfQuakePlaces(data = data, searchQuery)
+                FloatingActionButton(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(horizontal = 16.dp, vertical = 16.dp),
+                    onClick = {
+                        navController.navigate(
+                            Screen.MapScreen.route
+                        )
+                    }
+                ) {
+                    Row(modifier = Modifier.padding(8.dp)) {
+                        Text(text = "Map")
+                        Icon(Icons.Filled.Place, contentDescription = "Map button")
+                    }
+                }
+            }
         }
     }
 }
